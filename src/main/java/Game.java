@@ -3,7 +3,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Random;
 
 @NoArgsConstructor
@@ -12,47 +11,91 @@ import java.util.Random;
 public class Game {
     private Player player1;
     private Player player2;
-    private ArrayList<Tile> gameChain;
+    private ArrayList<Tile> gameChain = new ArrayList<>();
     private ArrayList<Tile> stock;
     private Player winner;
+    private Player activePlayer;
 
 
     /**
      * Shuffle the tiles.
      */
     public void prepareForGame() {
-        // Create Player
+        // Create Players
         this.player1 = new Player(1, "Alice");
         this.player2 = new Player(2, "Bob");
-
+        this.activePlayer = this.player1;
+        // define the tiles for the players and stock
         tilesForPlayers();
     }
 
+    public void testOnly() {
+        startGame();
+        Tile tile = checkAvailabilityOfTile(gameChain.get(0));
+        System.out.println(tile);
+    }
+
+    /**
+     * Split 7 tiles for each player and put the rest on the stock.
+     */
     private void tilesForPlayers() {
         //each player get 7 tiles
-        final ArrayList<Tile> tiles = Util.createSet();
+        this.stock = Util.createSet();
 
         for (int i = 0; i < 7; i++) {
-            int randomIndexPlayer1 = new Random()
-                    .nextInt(tiles.size());
-
-            Tile tilePlayer1 = tiles.get(randomIndexPlayer1);
-            tilePlayer1.setGamer(Optional.of(player1));
+            final Tile tilePlayer1 = randomTile();
             tilePlayer1.setStatus(StatusForTiles.IN_PLAYER);
             this.player1.getListTiles().add(tilePlayer1);
-            tiles.remove(randomIndexPlayer1);
 
-            int randomIndexPlayer2 = new Random()
-                    .nextInt(tiles.size());
-            Tile tilePlayer2 = tiles.get(randomIndexPlayer2);
-            tilePlayer2.setGamer(Optional.of(player2));
+            final Tile tilePlayer2 = randomTile();
             tilePlayer2.setStatus(StatusForTiles.IN_PLAYER);
             this.player2.getListTiles().add(tilePlayer2);
-            tiles.remove(randomIndexPlayer2);
         }
+    }
 
-        //the tiles remaining go to the stock
-        this.stock = tiles;
+    /**
+     * Choose a random tile from the stock.
+     *
+     * @return the tile randomly chosen.
+     */
+    private Tile randomTile() {
+        int randomIndexPlayer1 = new Random()
+                .nextInt(this.stock.size());
+
+        final Tile tile = stock.get(randomIndexPlayer1);
+
+        this.stock.remove(randomIndexPlayer1);
+
+        return tile;
+    }
+
+    /**
+     * Choose the tile to start and put it on the game chain.
+     */
+    private void startGame() {
+        final Tile tileToStart = randomTile();
+
+        //set the status to in game
+        tileToStart.setStatus(StatusForTiles.IN_GAME);
+
+        this.gameChain.add(tileToStart);
+
+        System.out.printf("Game starting with first tile: %s%n", tileToStart.getTileValues());
+    }
+
+    public Tile checkAvailabilityOfTile(final Tile tileFromChain) {
+
+        return activePlayer.getListTiles().stream()
+                .filter(tile -> tile.equals(tileFromChain))
+                .findFirst().orElse(null);
+    }
+
+    private void changeActivePlayer() {
+        if (activePlayer.equals(player1)) {
+            activePlayer = player2;
+        } else {
+            activePlayer = player1;
+        }
     }
 
     @Override

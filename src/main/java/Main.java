@@ -3,6 +3,6 @@ public class Main {
         Game game = new Game();
 
         game.prepareForGame();
-        System.out.println(game.getPlayer1().toString());
+        game.testOnly();
     }
 }

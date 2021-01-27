@@ -4,6 +4,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 
 public class Player {
+    @Getter
     private int id;
     private String name;
     @Getter
