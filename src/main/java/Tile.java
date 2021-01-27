@@ -17,12 +17,9 @@ public class Tile {
 
     private StatusForTiles status;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Tile)) {
-            return false;
-        }
-        final ImmutablePair<Integer, Integer> tileValueChain = ((Tile) obj).getTileValues();
+    public boolean isPlayable(Tile tileFromChain) {
+
+        final ImmutablePair<Integer, Integer> tileValueChain = tileFromChain.getTileValues();
 
         if (tileValueChain.getLeft().equals(tileValues.getLeft())
                 || tileValueChain.getRight().equals(tileValues.getRight())) {
