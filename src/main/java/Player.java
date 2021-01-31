@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Player {
     @Getter
     private int id;
+    @Getter
     private String name;
     @Getter
     @Setter
@@ -15,6 +16,15 @@ public class Player {
         this.id = id;
         this.name = name;
         this.listTiles = new ArrayList<>();
+    }
+
+    /**
+     * Check if active player have tiles.
+     *
+     * @return true if he have.
+     */
+    public boolean haveTiles() {
+        return !this.listTiles.isEmpty();
     }
 
     @Override

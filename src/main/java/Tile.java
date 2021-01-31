@@ -1,7 +1,6 @@
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
 /**
  * The definition of the tile.
@@ -10,40 +9,44 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 @Getter
 @Setter
 public class Tile {
+    /**
+     * Value of the left.
+     */
+    private int left;
 
-    private final int id;
+    /**
+     * Value of the right.
+     */
+    private int right;
 
-    private ImmutablePair<Integer, Integer> tileValues;
+    /**
+     * Check if the tile is compatible with the one on the game chain.
+     *
+     * @return true if possible to play, false if not.
+     */
+    public boolean isPlayable(int leftOfChain, int rightOfChain ) {
 
-    private StatusForTiles status;
-
-    public boolean isPlayable(Tile tileFromChain) {
-
-        final ImmutablePair<Integer, Integer> tileValueChain = tileFromChain.getTileValues();
-
-        if (tileValueChain.getLeft().equals(tileValues.getLeft())
-                || tileValueChain.getRight().equals(tileValues.getRight())) {
+        if (leftOfChain == this.left
+                || rightOfChain == this.right) {
             // rotation
             applyRotation();
             return true;
         }
 
-        return tileValueChain.getRight().equals(tileValues.getLeft())
-                || tileValueChain.getLeft().equals(tileValues.getRight());
+        return rightOfChain == this.left || leftOfChain == this.right;
     }
 
+    /**
+     * Rotate the tile to match the game chain position.
+     */
     public void applyRotation() {
-        int oldLeft = this.tileValues.getLeft();
-
-        this.tileValues = new ImmutablePair<>(this.getTileValues().getRight(), oldLeft);
+        int newRight = this.left;
+        this.left = this.right;
+        this.right = newRight;
     }
 
     @Override
     public String toString() {
-        return "Tile{" +
-                "id=" + id +
-                ", \n tileValues=" + tileValues +
-                ", \n status=" + status +
-                '}';
+        return "<" + left + ":" + right + ">";
     }
 }
