@@ -54,6 +54,9 @@ public class Game {
                         } else {
                             activePlayer.getListTiles().add(tileFromStock);
                         }
+                        if (this.stock.isEmpty()) {
+                            return;
+                        }
                     }
                 }
 
