@@ -2,7 +2,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Optional;
+import java.util.ArrayList;
 import java.util.Stack;
 
 @NoArgsConstructor
@@ -22,8 +22,8 @@ public class Game {
      */
     private void prepareForGame() {
         // Create Players
-        this.player1 = new Player(1, "Alice");
-        this.player2 = new Player(2, "Bob");
+        this.player1 = new Player("Alice");
+        this.player2 = new Player("Bob");
         this.activePlayer = this.player1;
         // define the tiles for the players and stock
         tilesForPlayers();
@@ -33,57 +33,78 @@ public class Game {
         prepareForGame();
         startGame();
 
+        int checkForDraw = 0;
         while (!this.stock.isEmpty()) {
 
             //compare the tiles of the active player with the left and right values of the game chain
-            for (Tile tileToCheck : activePlayer.getListTiles()) {
+            final ArrayList<Tile> listTiles = activePlayer.getListTiles();
+
+            for (int i = 0; i < listTiles.size(); i++) {
+                final Tile tileToCheck = listTiles.get(i);
                 if (tileToCheck.isPlayable(gameChain.getLeftValue(), gameChain.getRightValue())) {
                     // there is a tile compatible with the game chain
-                    checkLeftOrRight(tileToCheck);
+                    leftOrRight(tileToCheck);
                     activePlayer.getListTiles().remove(tileToCheck);
-                    return;
-                } else {
+                    checkForDraw = 0;
+                    break;
+                }
+
+                if (i == listTiles.size() - 1) {
                     // go to stock
-                    boolean success = false;
-                    while (!success) {
-                        Tile tileFromStock = this.stock.pop();
+                    boolean tileFound = false;
+                    while (!tileFound) {
+
+                        if (this.stock.isEmpty()) {
+                            checkForDraw++;
+                            tileFound = true;
+                        }
+                        final Tile tileFromStock = this.stock.pop();
                         if (tileFromStock.isPlayable(gameChain.getLeftValue(), gameChain.getRightValue())) {
-                            checkLeftOrRight(tileFromStock);
-                            success = true;
-                            activePlayer.getListTiles().remove(tileToCheck);
+                            leftOrRight(tileFromStock);
+                            tileFound = true;
+                            checkForDraw = 0;
                         } else {
                             activePlayer.getListTiles().add(tileFromStock);
                         }
-                        if (this.stock.isEmpty()) {
-                            return;
-                        }
                     }
                 }
+            }
 
+            if (checkForDraw > 1) {
+                //draw
+                System.out.println("Draw!");
+                return;
             }
             //The game ends if one of the players does not have more tiles
             if (!activePlayer.haveTiles()) {
                 System.out.printf("Player %s has won!%n", activePlayer.getName());
                 return;
             }
-
             changeActivePlayer();
         }
     }
 
-    private void checkLeftOrRight(final Tile tileToCheck) {
+    /**
+     * Determine if the tile goes to the left or to the right side of the chain.
+     *
+     * @param tileToCheck the tile that you already know that goes to the game chain to check.
+     */
+    private void leftOrRight(final Tile tileToCheck) {
         if (tileToCheck.getLeft() == this.gameChain.getRightValue()) {
             System.out.printf("%s plays %s to connect to tile %s on the board %n",
                     activePlayer.getName(),
                     tileToCheck.toString(),
                     this.gameChain.getRightLeaf().toString());
             this.gameChainString = this.gameChainString.concat(tileToCheck.toString());
+            this.gameChain.setRightLeaf(tileToCheck);
         } else {
             System.out.printf("%s plays %s to connect to tile %s on the board %n",
                     activePlayer.getName(),
                     tileToCheck.toString(),
                     this.gameChain.getLeftLeaf().toString());
             this.gameChainString = tileToCheck.toString().concat(this.gameChainString);
+            this.gameChain.setLeftLeaf(tileToCheck);
+
         }
         System.out.printf("Board is now: %s %n", this.gameChainString);
     }
@@ -122,29 +143,14 @@ public class Game {
         System.out.printf("Game starting with first tile: %s%n", this.gameChainString);
     }
 
-    //public Optional<Tile> checkAvailabilityOfTile(final Tile tileFromChain) {
-//
-    //    return activePlayer.getListTiles()
-    //            .stream()
-    //            .filter(tile -> tile.isPlayable(tileFromChain))
-    //            .findAny();
-    //}
-
+    /**
+     * Change the active player in game.
+     */
     private void changeActivePlayer() {
         if (activePlayer.equals(player1)) {
             activePlayer = player2;
         } else {
             activePlayer = player1;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Game{" +
-                "player1=" + player1 +
-                ", player2=" + player2 +
-                ", gameChain=" + gameChain +
-                ", stock=" + stock +
-                '}';
     }
 }

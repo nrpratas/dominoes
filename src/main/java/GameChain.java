@@ -7,11 +7,26 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GameChain {
+    /**
+     * The root tile.
+     */
     private Tile root;
+    /**
+     * The left tile of the chain.
+     */
     private Tile leftLeaf;
+
+    /**
+     * The right tile of the game.
+     */
     private Tile rightLeaf;
 
-    public GameChain(Tile root) {
+    /**
+     * Constructor for the game chain.
+     *
+     * @param root the root tile.
+     */
+    public GameChain(final Tile root) {
         this.root = root;
         this.leftLeaf = root;
         this.rightLeaf = root;
@@ -32,8 +47,6 @@ public class GameChain {
      * @return the value of the right in the chain.
      */
     public int getRightValue() {
-        return leftLeaf.getLeft();
+        return rightLeaf.getRight();
     }
-
-
 }

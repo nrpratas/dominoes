@@ -2,18 +2,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
-    @Getter
-    private int id;
     @Getter
     private String name;
     @Getter
     @Setter
-    private ArrayList<Tile> listTiles;
+    private List<Tile> listTiles;
 
-    public Player(int id, String name) {
-        this.id = id;
+    public Player(String name) {
         this.name = name;
         this.listTiles = new ArrayList<>();
     }
@@ -25,14 +23,5 @@ public class Player {
      */
     public boolean haveTiles() {
         return !this.listTiles.isEmpty();
-    }
-
-    @Override
-    public String toString() {
-        return "Player{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", listTiles=" + listTiles +
-                '}';
     }
 }
