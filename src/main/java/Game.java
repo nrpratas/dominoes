@@ -2,7 +2,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 @NoArgsConstructor
@@ -37,7 +37,7 @@ public class Game {
         while (!this.stock.isEmpty()) {
 
             //compare the tiles of the active player with the left and right values of the game chain
-            final ArrayList<Tile> listTiles = activePlayer.getListTiles();
+            final List<Tile> listTiles = activePlayer.getListTiles();
 
             for (int i = 0; i < listTiles.size(); i++) {
                 final Tile tileToCheck = listTiles.get(i);
