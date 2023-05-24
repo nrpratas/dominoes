@@ -39,39 +39,54 @@ public class Game {
             //compare the tiles of the active player with the left and right values of the game chain
             final List<Tile> listTiles = activePlayer.getListTiles();
 
+            //iterate the list of tiles of the active player
+            //TODO may go boom in tests since we are iterating over a list we are adding shit to
             for (int i = 0; i < listTiles.size(); i++) {
                 final Tile tileToCheck = listTiles.get(i);
+                //check if active player can play tile listTiles.get(i) on the right or on the left
                 if (tileToCheck.isPlayable(gameChain.getLeftValue(), gameChain.getRightValue())) {
-                    // there is a tile compatible with the game chain
+                    // there is a tile compatible with the game chain it is played
                     leftOrRight(tileToCheck);
+                    //the tile is removed from the player tiles
                     activePlayer.getListTiles().remove(tileToCheck);
                     checkForDraw = 0;
+                    //we stop iterating over the player's list of tiles
                     break;
                 }
 
+                //if the tile listTiles.get(i) is not playable we check we have iterated over the whole list
                 if (i == listTiles.size() - 1) {
                     // go to stock
                     boolean tileFound = false;
+                    // we keep cycling until we found a playable tile
                     while (!tileFound) {
 
+                        // if there are no tiles left in the stock
                         if (this.stock.isEmpty()) {
                             checkForDraw++;
+                            // we say we found a tile
                             tileFound = true;
                         }
+                        //remove one tile from the stock (
+                        //TODO: will break on tests since we may be popping an empty stack
                         final Tile tileFromStock = this.stock.pop();
+                        //check if the card is playable on the left or right
                         if (tileFromStock.isPlayable(gameChain.getLeftValue(), gameChain.getRightValue())) {
+                            //if so we play it, mark the tile as found & set check for draw to 0
                             leftOrRight(tileFromStock);
                             tileFound = true;
                             checkForDraw = 0;
                         } else {
+                            //we add the tile to the player hand
                             activePlayer.getListTiles().add(tileFromStock);
                         }
                     }
                 }
             }
 
+            //after iterating all the player tiles
             if (checkForDraw > 1) {
-                //draw
+                //if the pile is empty we assume a draw
                 System.out.println("Draw!");
                 return;
             }
