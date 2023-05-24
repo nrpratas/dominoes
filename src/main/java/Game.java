@@ -20,7 +20,7 @@ public class Game {
     /**
      * Shuffle the tiles.
      */
-    private void prepareForGame() {
+    void prepareForGame() {
         // Create Players
         this.player1 = new Player("Alice");
         this.player2 = new Player("Bob");
@@ -136,7 +136,7 @@ public class Game {
     /**
      * Choose the tile to start and put it on the game chain.
      */
-    private void startGame() {
+    void startGame() {
         final Tile tileToStart = stock.pop();
         this.gameChain = new GameChain(tileToStart);
         this.gameChainString = tileToStart.toString();
